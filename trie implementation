@@ -1,0 +1,160 @@
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+// TrieNode templet
+class TrieNode{
+ public:
+ 
+ char data;
+ int flag;
+  TrieNode* child[26];
+  
+ //constructor
+  TrieNode(char ch){
+      data=ch;
+      flag=0;
+      
+     for(int i=0;i<26;i++)
+       child[i]=NULL;
+  }
+    
+    
+};
+
+
+//Trie class
+
+class trie{
+  public:
+  
+  TrieNode* root;
+  
+  trie(){
+      root=new TrieNode('/');
+  }
+  
+  
+ //insertion functioin
+ void f1(TrieNode* root,string s){
+     if(s.size()==0){
+         root->flag++;
+         return;
+     }
+     
+    int x=s[0]-'a';
+    TrieNode* mychild;
+    
+    if(root->child[x]!=NULL){
+        mychild=root->child[x];
+    }
+    
+    else{
+        mychild=new TrieNode(s[0]);
+        root->child[x]=mychild;
+    }
+    
+    f1(mychild,s.substr(1));
+     
+ }
+ 
+ //base function
+ void insert(string s){
+     f1(root,s);
+ }
+ 
+ 
+ //searching
+ bool f2(TrieNode* root, string s){
+     
+     if(s.size()==0){
+        return root->flag > 0;
+     }
+     
+     int x=s[0]-'a';
+     TrieNode* mychild;
+     
+     if(root->child[x]!=NULL){
+         mychild=root->child[x];
+     }
+     
+     else return false;
+     
+     return f2(mychild,s.substr(1));
+ }
+ 
+ bool search(string s){
+     return f2(root,s);
+ }
+ 
+ 
+ //deletion
+ 
+ void f3(TrieNode* root,string s){
+     if(s.size()==0){
+         if(root->flag > 0){
+             root->flag=0;
+             return;
+         }
+         
+         else{
+             cout<<"string not exist"<<endl;
+             return;
+         }
+     }
+     
+     
+     int x=s[0]-'a';
+     TrieNode* mychild;
+     
+     if(root->child[x]!=NULL){
+         mychild=root->child[x];
+     }
+     
+     else{
+         cout<<"string doesn't exist"<<endl;
+         return;
+     }
+     
+     
+     f3(mychild,s.substr(1));
+     
+ }
+ 
+ //base f3
+ 
+ void del(string s){
+     f3(root,s);
+ }
+  
+    
+};
+
+
+
+int main(){
+    
+    trie *t=new trie();
+    
+    int n;
+    cin>>n;
+   
+   //insertion 
+    for(int i=0;i<n;i++){
+        string s;
+        cin>>s;
+        t->insert(s);
+    }
+    
+    //searching 
+  cout<<t->search("coder")<<endl;
+  
+  //deletion
+   cout<<t->search("coder")<<endl; 
+    t->del("code");
+   cout<<t->search("code")<<endl; 
+  
+    
+    return 0;
+}

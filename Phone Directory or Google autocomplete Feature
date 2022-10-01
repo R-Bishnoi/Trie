@@ -1,0 +1,106 @@
+
+class TrieNode{
+    public:
+  char data;
+   bool flag;
+    TrieNode* child[26];
+    
+   TrieNode(char ch){
+       data=ch;
+       flag=false;
+       
+      for(int i=0;i<26;i++)
+          child[i]=NULL;
+   }    
+};
+
+
+class trie{
+   public:
+    
+    TrieNode* root;
+    trie(){
+        root=new TrieNode('/');
+    }
+   
+   //insertion
+    
+   void insertUtil(TrieNode* root,string s){
+       if(s.size()==0){
+           root->flag=true;
+           return;
+       }
+       
+       int x=s[0]-'a';
+       TrieNode* mychild;
+       
+      if(root->child[x]!=NULL){
+          mychild=root->child[x];
+      } 
+       
+       else{
+           mychild=new TrieNode(s[0]);
+           root->child[x]=mychild;
+       }
+       
+       insertUtil(mychild,s.substr(1));
+   } 
+    
+  void insert(string s){
+      insertUtil(root,s);
+  }  
+  
+    //print function
+    void solve(TrieNode* curr,vector<string>&temp,string prefix){
+        if(curr->flag){
+            temp.push_back(prefix);
+        }
+        
+        for(char ch='a';ch<='z';ch++){
+            TrieNode* next=curr->child[ch-'a'];
+            if(next!=NULL){
+                prefix.push_back(ch);
+                solve(next,temp,prefix);
+                prefix.pop_back();
+            }
+        }
+    }
+    
+    
+   //get suggestion 
+
+  vector<vector<string>> get_query(string q){
+   TrieNode* prev=root;
+      string prefix="";
+      vector<vector<string>>ans;
+      
+     for(int i=0;i<q.size();i++){
+         char c=q[i];
+         prefix.push_back(c);
+         TrieNode* curr=prev->child[c-'a'];
+         
+         if(curr==NULL)break;
+         
+         vector<string>temp;
+         solve(curr,temp,prefix);
+         ans.push_back(temp);
+         temp.clear();
+         prev=curr;
+     }
+      
+   return ans;   
+  }  
+    
+};
+
+
+vector<vector<string>> phoneDirectory(vector<string>&v, string &q){
+       trie *t=new trie();
+    
+       //insertion 
+    for(int i=0;i<v.size();i++)
+      t->insert(v[i]);
+   
+     //get_query
+    return t->get_query(q);
+}
